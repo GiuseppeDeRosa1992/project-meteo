@@ -1,10 +1,12 @@
 <script>
 import AppHeader from './components/AppHeader.vue';
+import AppTableMeteo from './components/AppTableMeteo.vue';
 export default {
   name: 'App',
 
   components: {
     AppHeader,
+    AppTableMeteo,
   },
 
   data() {
@@ -19,6 +21,7 @@ export default {
 
 <template>
   <AppHeader />
+  <AppTableMeteo />
 </template>
 
 <style scoped></style>

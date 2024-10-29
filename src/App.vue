@@ -1,12 +1,24 @@
 <script>
+import AppHeader from './components/AppHeader.vue';
+export default {
+  name: 'App',
+
+  components: {
+    AppHeader,
+  },
+
+  data() {
+    return {
+
+    }
+  }
+
+}
 
 </script>
 
 <template>
-  <div class="bg-danger">
-    ciao
-  </div>
-
+  <AppHeader />
 </template>
 
 <style scoped></style>

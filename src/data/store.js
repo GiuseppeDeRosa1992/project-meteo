@@ -13,7 +13,13 @@ const myData = reactive({
 
     queryMeteo: {},
 
-    queryResult: {},
+    queryResult: null,
+
+    city: [],
+
+    currentCityName: "",
+
+    recordCity: JSON.parse(localStorage.getItem("city")) || [],
 });
 
 export default myData;

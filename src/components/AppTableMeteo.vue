@@ -24,24 +24,45 @@ export default {
 
         },
 
+        visibilityTrash() {
+            let cityExist = false;
+            store.recordCity.forEach(element => {
+                if (element.cityLongitude == store.resultQueryMeteo.cityLongitude) {
+                    cityExist = true;
+                }
+            });
+            return cityExist;
+        },
+
+        visibilityStar() {
+            let cityExist = false;
+            store.recordCity.forEach(element => {
+                if (element.cityLongitude == store.resultQueryMeteo.cityLongitude) {
+                    cityExist = true;
+                }
+            });
+            if (!cityExist) {
+                return "fa-regular fa-star";
+            } else {
+                return "fa-solid fa-star";
+            }
+        },
+
         preferiteCity() {
             let cityExist = false;
             if (store.recordCity.length == 0) {
-                store.recordCity.push(store.queryMeteo)
+                store.recordCity.push(store.resultQueryMeteo);
                 localStorage.setItem("city", JSON.stringify(store.recordCity));
-                console.log('pucciotto')
             } else {
                 store.recordCity.forEach(element => {
-                    if (element.cityLongitude == store.queryMeteo.cityLongitude) {
+                    if (element.cityLongitude == store.resultQueryMeteo.cityLongitude) {
                         cityExist = true;
-                        console.log('ciao')
                     }
                 });
                 if (!cityExist) {
-                    store.recordCity.push(store.queryMeteo)
+                    store.recordCity.push(store.resultQueryMeteo);
                     localStorage.setItem("city", JSON.stringify(store.recordCity));
-                    store.cityIndex = store.recordCity.length - 1
-                    console.log('pucciotto 2')
+                    store.cityIndex = store.recordCity.length - 1;
                 }
             }
 
@@ -59,15 +80,10 @@ export default {
                 .get(`https://api.open-meteo.com/v1/forecast?latitude=${city.cityLatitude}&longitude=${city.cityLongitude}&${store.queryParams}`)
                 .then(response => {
                     store.queryResult = response.data
-                    console.log(store.queryResult)
                 });
 
-            store.queryMeteo = city
+            store.resultQueryMeteo = city
             console.log(city)
-
-            store.currentCityName = city.cityName
-            store.currentCityCountry = city.cityCountryCode
-            store.currentCityCountrySubdivision = city.cityCountrySubdivision
 
             store.cityIndex = indice
         },
@@ -79,18 +95,23 @@ export default {
 
 <template>
     <div class="container">
-        <h3 class="m-0 py-2 text-center">Città Preferite:
+        <h3 class="mb-0 mt-5 mt-sm-0 pt-5 py-sm-2 text-center">Città Preferite:
             <template v-for="city, i in store.recordCity">
-                <span @click="resultPreferiteCity(city, i)" class="badge bg-primary mx-1">{{ city.cityName }}, {{
+                <span @click="resultPreferiteCity(city, i)" class="badge bg-primary m-1">{{ city.cityName }}, {{
                     city.cityCountryCode }}</span>
             </template>
         </h3>
-        <div class="table-responsive" v-if="store.queryResult">
-            <h2 class="py-4 m-0 text-center">Città scelta: {{ store.currentCityName }},
-                {{ store.currentCityCountrySubdivision }},
-                {{ store.currentCityCountry }}
-                <i @click="preferiteCity()" class="fa-regular fa-star" style="color: #FFD43B;"></i>
-                <i @click="deleteCity()" class="fa-regular fa-trash-can ms-3" style="color: #ff0000;"></i>
+        <div class="table-responsive text-center" v-if="store.queryResult">
+            <h2 class="py-2 py-md-5 m-0 text-center">Città scelta:
+                {{ store.resultQueryMeteo.cityName }},
+                {{ store.resultQueryMeteo.cityCountrySubdivision }},
+                {{ store.resultQueryMeteo.cityCountryCode }}
+
+                <i @click="preferiteCity()" :class="visibilityStar()" style="color: #FFD43B;"></i>
+
+                <i v-if="visibilityTrash()" @click="deleteCity()" class="fa-regular fa-trash-can ms-3"
+                    style="color: #ff0000;">
+                </i>
             </h2>
             <table class="table">
                 <thead>
@@ -99,7 +120,7 @@ export default {
                         <th scope="col">Temperatura</th>
                         <th scope="col">Condizioni Meteo</th>
                         <th scope="col">Umidità</th>
-                        <th scope="col">Vento</th>
+                        <th scope="col" class="d-none d-sm-block">Vento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,7 +143,7 @@ export default {
                             {{ store.queryResult.current_units.relative_humidity_2m }}
                         </td>
 
-                        <td>
+                        <td class="d-none d-sm-block">
                             {{ store.queryResult.current.wind_speed_10m }}
                             {{ store.queryResult.current_units.wind_speed_10m }}
                         </td>
@@ -131,7 +152,7 @@ export default {
             </table>
         </div>
 
-        <div class="table-responsive py-5 my-5" v-if="store.queryResult">
+        <div class="table-responsive py-5 my-5 text-center" v-if="store.queryResult">
             <table class="table">
                 <thead>
                     <tr>
@@ -139,7 +160,7 @@ export default {
                         <th scope="col">Temperatura</th>
                         <th scope="col">Condizioni Meteo</th>
                         <th scope="col">Umidità</th>
-                        <th scope="col">Vento</th>
+                        <th scope="col" class="d-none d-sm-block">Vento</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -163,7 +184,7 @@ export default {
                                 {{ store.queryResult.current_units.relative_humidity_2m }}
                             </td>
 
-                            <td>
+                            <td class="d-none d-sm-block">
                                 {{ store.queryResult.hourly.wind_speed_10m[i] }}
                                 {{ store.queryResult.current_units.wind_speed_10m }}
                             </td>
@@ -179,7 +200,8 @@ export default {
 </template>
 
 <style scoped>
-i {
+i,
+span {
     cursor: pointer;
 }
 </style>

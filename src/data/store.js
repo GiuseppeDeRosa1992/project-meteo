@@ -17,15 +17,13 @@ const myData = reactive({
 
     city: [],
 
-    currentCityName: "",
-
-    currentCityCountry: "",
-
-    currentCityCountrySubdivision: "",
+    resultQueryMeteo: {},
 
     recordCity: JSON.parse(localStorage.getItem("city")) || [],
 
     cityIndex: "",
+
+    starClass: "fa-regular fa-star",
 });
 
 export default myData;

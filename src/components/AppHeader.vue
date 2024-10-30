@@ -56,10 +56,9 @@ export default {
                     store.queryResult = response.data
                     console.log(store.queryResult)
                 });
+            store.city = [];
 
-            store.currentCityName = store.queryMeteo.cityName;
-            store.currentCityCountry = store.queryMeteo.cityCountryCode;
-            store.currentCityCountrySubdivision = store.queryMeteo.cityCountrySubdivision;
+            store.resultQueryMeteo = store.queryMeteo;
             store.query = ""
         },
 
@@ -70,11 +69,11 @@ export default {
 <template>
     <header class="bg-primary">
         <div class="py-2 row m-0 justify-content-between align-items-center">
-            <h2 class="m-0 py-2 col-auto">Cerca il Meteo della tua Città</h2>
-            <div class="m-0 py-2 col-auto position-relative">
+            <h2 class="col-12 text-center m-0 py-2 col-md-7 text-md-start">Cerca il Meteo della tua Città</h2>
+            <div class="col-auto text-center m-0 py-2 col-md-auto text-md-end position-relative">
                 <input type="text" list="city" name="city" id="" placeholder="Nome della Città" @click="dBlock()"
                     @input="searchCityMeteo()" v-model="store.query">
-                <div class="bg-white position-absolute top-25" id="city">
+                <div class="bg-white position-absolute top-25 text-start" id="city">
                     <template v-for="singleCity in store.city">
                         <p
                             @click="selectedCity(singleCity.address.municipality, singleCity.position.lat, singleCity.position.lon, singleCity.address.countrySubdivision, singleCity.address.countryCode)">

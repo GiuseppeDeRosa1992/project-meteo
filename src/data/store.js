@@ -19,7 +19,13 @@ const myData = reactive({
 
     currentCityName: "",
 
+    currentCityCountry: "",
+
+    currentCityCountrySubdivision: "",
+
     recordCity: JSON.parse(localStorage.getItem("city")) || [],
+
+    cityIndex: "",
 });
 
 export default myData;

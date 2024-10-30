@@ -58,6 +58,8 @@ export default {
                 });
 
             store.currentCityName = store.queryMeteo.cityName;
+            store.currentCityCountry = store.queryMeteo.cityCountryCode;
+            store.currentCityCountrySubdivision = store.queryMeteo.cityCountrySubdivision;
             store.query = ""
         },
 

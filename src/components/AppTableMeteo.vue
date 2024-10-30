@@ -40,21 +40,36 @@ export default {
                 if (!cityExist) {
                     store.recordCity.push(store.queryMeteo)
                     localStorage.setItem("city", JSON.stringify(store.recordCity));
+                    store.cityIndex = store.recordCity.length - 1
                     console.log('pucciotto 2')
                 }
             }
+
             console.log(store.recordCity)
         },
 
-        resultPreferiteCity(latitude, longitude, name) {
+        deleteCity() {
+            store.recordCity.splice(store.cityIndex, 1);
+            localStorage.setItem("city", JSON.stringify(store.recordCity));
+            console.log(store.recordCity)
+        },
+
+        resultPreferiteCity(city, indice) {
             axios
-                .get(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&${store.queryParams}`)
+                .get(`https://api.open-meteo.com/v1/forecast?latitude=${city.cityLatitude}&longitude=${city.cityLongitude}&${store.queryParams}`)
                 .then(response => {
                     store.queryResult = response.data
                     console.log(store.queryResult)
                 });
 
-            store.currentCityName = name;
+            store.queryMeteo = city
+            console.log(city)
+
+            store.currentCityName = city.cityName
+            store.currentCityCountry = city.cityCountryCode
+            store.currentCityCountrySubdivision = city.cityCountrySubdivision
+
+            store.cityIndex = indice
         },
 
     }
@@ -65,14 +80,17 @@ export default {
 <template>
     <div class="container">
         <h3 class="m-0 py-2 text-center">Città Preferite:
-            <template v-for="city in store.recordCity">
-                <span @click="resultPreferiteCity(city.cityLatitude, city.cityLongitude, city.cityName)"
-                    class="badge bg-primary mx-1">{{ city.cityName }}, {{ city.cityCountryCode }}</span>
+            <template v-for="city, i in store.recordCity">
+                <span @click="resultPreferiteCity(city, i)" class="badge bg-primary mx-1">{{ city.cityName }}, {{
+                    city.cityCountryCode }}</span>
             </template>
         </h3>
         <div class="table-responsive" v-if="store.queryResult">
-            <h2 class="py-4 m-0 text-center">Città scelta: {{ store.currentCityName }}
+            <h2 class="py-4 m-0 text-center">Città scelta: {{ store.currentCityName }},
+                {{ store.currentCityCountrySubdivision }},
+                {{ store.currentCityCountry }}
                 <i @click="preferiteCity()" class="fa-regular fa-star" style="color: #FFD43B;"></i>
+                <i @click="deleteCity()" class="fa-regular fa-trash-can ms-3" style="color: #ff0000;"></i>
             </h2>
             <table class="table">
                 <thead>

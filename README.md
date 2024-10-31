@@ -1,5 +1,32 @@
-# Vue 3 + Vite
+# AppMeteo - Frontend
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Tecnologie utilizzate
+- **JavaScript**: Linguaggio di programmazione.
+- **Vue.js**: Framework utilizzato per la creazione dell'interfaccia utente dinamica.
+- **Bootstrap**: Libreria per gestire interfacce web responsive.
+- **Axios**: Per gestire le chiamate ApiMeteo e ApiTomTom.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+
+## Requisiti di sistema
+
+Prima di iniziare, assicurati di avere installato i seguenti strumenti:
+
+- **VITE**
+- **NPM**
+
+## Installazione
+
+Segui questi passaggi per configurare l'ambiente di sviluppo localmente:
+
+1. Installa le dipendenze del frontend e aggiornale se necessario:
+```bash
+   npm install
+   npm update
+```
+
+## Avvia il Server
+
+1. Esegui da terminale il seguente comando per avviare il server front-end:
+```bash
+   npm run dev
+```

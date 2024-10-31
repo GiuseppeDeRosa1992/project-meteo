@@ -1,6 +1,7 @@
 <script>
 import axios from 'axios';
 import store from '../data/store.js';
+import Function from '../data/function.js';
 
 export default {
     name: 'AppHeader',
@@ -8,7 +9,7 @@ export default {
     data() {
         return {
             store,
-
+            Function,
         }
     },
 
@@ -53,13 +54,27 @@ export default {
             axios
                 .get(`https://api.open-meteo.com/v1/forecast?latitude=${store.queryMeteo.cityLatitude}&longitude=${store.queryMeteo.cityLongitude}&${store.queryParams}`)
                 .then(response => {
-                    store.queryResult = response.data
-                    console.log(store.queryResult)
+                    store.queryResult = response.data;
+                    let time = store.queryResult.hourly.time;
+                    let hours = time.map(time => {
+                        let date = new Date(time);
+                        let updateDate = date.getHours();
+                        if (updateDate <= 9) {
+                            updateDate = "0" + updateDate + ":00";
+                            return updateDate;
+                        }
+                        return updateDate + ":00";
+                    });
+
+                    store.data.labels = hours;
+                    store.data.datasets[0].data = store.queryResult.hourly.temperature_2m;
+                    Function.renderChart(this.$refs.chartMeteo);
                 });
             store.city = [];
 
             store.resultQueryMeteo = store.queryMeteo;
-            store.query = ""
+            store.query = "";
+
         },
 
     },
@@ -86,6 +101,11 @@ export default {
             </div>
         </div>
     </header>
+
+    <div class="pb-5" v-if="store.queryResult">
+        <canvas ref="chartMeteo"></canvas>
+    </div>
+
 </template>
 
 <style scoped>

@@ -24,6 +24,47 @@ const myData = reactive({
     cityIndex: "",
 
     starClass: "fa-regular fa-star",
+
+    data: {
+        labels: "",
+        datasets: [{
+            label: 'Statistiche Temperatura',
+            data: "",
+            borderWidth: 2,
+            borderColor: '2 px solid black',
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function (tooltipItems) {
+                        return 'Ore: ' + tooltipItems[0].label;
+                    },
+
+                    label: function (tooltipItem) {
+                        return 'Temperatura: ' + tooltipItem.formattedValue + '℃';
+                    },
+                }
+            },
+        },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+                    text: "Ore"
+                }
+            },
+            y: {
+                title: {
+                    display: true,
+                    text: "Gradi (℃)",
+                }
+            }
+        }
+    }
+
 });
 
 export default myData;

@@ -1,18 +1,23 @@
 <script>
 import store from '../data/store.js';
+import Function from '../data/function.js';
 import axios from 'axios';
-
 export default {
     name: 'AppTableMeteo',
+
+    components: {
+    },
 
     data() {
         return {
             store,
+            Function,
         }
     },
 
     methods: {
 
+        // Passa una icona a ogni condizione meteo
         weatherIcon(condition) {
             if (condition == 0) {
                 return 'fa-solid fa-sun text-warning'
@@ -24,6 +29,7 @@ export default {
 
         },
 
+        //Se la città è tra i preferiti allora aggiunge il cestino elimina, sennò viene mostrata solo la stella vuota
         visibilityTrash() {
             let cityExist = false;
             store.recordCity.forEach(element => {
@@ -34,6 +40,7 @@ export default {
             return cityExist;
         },
 
+        //Se la ciità viene aggiunta ai preferiti allora la stellina è piena sennò se la città non è tra i preferiti la stellina è vuota
         visibilityStar() {
             let cityExist = false;
             store.recordCity.forEach(element => {
@@ -48,6 +55,7 @@ export default {
             }
         },
 
+        // Funzione per aggiungere la città al localStorage e ai preferiti
         preferiteCity() {
             let cityExist = false;
             if (store.recordCity.length == 0) {
@@ -65,35 +73,54 @@ export default {
                     store.cityIndex = store.recordCity.length - 1;
                 }
             }
-
-            console.log(store.recordCity)
         },
 
+        // Al click sul cestino elimina una città dal localStorage e dai preferiti
         deleteCity() {
             store.recordCity.splice(store.cityIndex, 1);
             localStorage.setItem("city", JSON.stringify(store.recordCity));
-            console.log(store.recordCity)
         },
 
+        // Chiamata axios che restituisce i dati della città che sta nei preferiti che viene cliccata
         resultPreferiteCity(city, indice) {
             axios
                 .get(`https://api.open-meteo.com/v1/forecast?latitude=${city.cityLatitude}&longitude=${city.cityLongitude}&${store.queryParams}`)
                 .then(response => {
-                    store.queryResult = response.data
+                    store.queryResult = response.data;
+                    let time = store.queryResult.hourly.time;
+                    let hours = time.map(time => {
+                        let date = new Date(time);
+                        let updateDate = date.getHours();
+                        if (updateDate <= 9) {
+                            updateDate = "0" + updateDate + ":00";
+                            return updateDate;
+                        }
+                        return updateDate + ":00";
+                    });
+
+                    store.data.labels = hours;
+                    store.data.datasets[0].data = store.queryResult.hourly.temperature_2m;
+                    Function.renderChart(this.$refs.chartMeteo);
+
                 });
 
-            store.resultQueryMeteo = city
-            console.log(city)
-
-            store.cityIndex = indice
+            store.resultQueryMeteo = city;
+            store.cityIndex = indice;
         },
+    },
 
+    mounted() {
+        document.addEventListener("DOMContentLoaded", function () {
+            const canvas = document.getElementById("chartMeteo");
+            Function.renderChart(canvas);  // Passa il riferimento al canvas
+        });
     }
 }
 
 </script>
 
 <template>
+
     <div class="container">
         <h3 class="mb-0 mt-5 mt-sm-0 pt-5 py-sm-2 text-center">Città Preferite:
             <template v-for="city, i in store.recordCity">
@@ -152,7 +179,7 @@ export default {
             </table>
         </div>
 
-        <div class="table-responsive py-5 my-5 text-center" v-if="store.queryResult">
+        <div class="table-responsive py-5 mt-5 text-center" v-if="store.queryResult">
             <table class="table">
                 <thead>
                     <tr>
@@ -193,6 +220,10 @@ export default {
                     </template>
                 </tbody>
             </table>
+        </div>
+
+        <div class="pb-5" v-if="store.queryResult">
+            <canvas ref="chartMeteo"></canvas>
         </div>
     </div>
 
